@@ -112,6 +112,22 @@ public class LessonDAO {
 		}
 	}
 	
+	public void deleteLesson(int id) throws SQLException {
+		PreparedStatement deleteLessonStatement = null;
+		
+		try {
+			deleteLessonStatement = myConn.prepareStatement("DELETE FROM lesson WHERE lesson_id=?");
+			
+			deleteLessonStatement.setInt(1, id);
+	  		
+			deleteLessonStatement.executeUpdate();
+			deleteLessonStatement.close();
+		}
+		finally {
+			deleteLessonStatement.close();
+		}		
+	}
+	
 	private Lesson convertRowToLesson(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("lesson_id");
 		Date d = myRs.getDate("lesson_date");

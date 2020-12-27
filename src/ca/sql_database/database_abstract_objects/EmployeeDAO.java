@@ -90,15 +90,6 @@ public class EmployeeDAO {
 		}
 	}
 	
-	public void deleteEmployee(int id) throws SQLException {
-		PreparedStatement deleteEmployeeStatement = myConn.prepareStatement("DELETE FROM employee WHERE employee_id=?");
-
-		deleteEmployeeStatement.setInt(1, id);
-  		
-		deleteEmployeeStatement.executeUpdate();
-		deleteEmployeeStatement.close();
-	}
-	
 	public void updateEmployee(String fname, String lname, String email, int id) throws SQLException {
 		PreparedStatement updateEmployeeStatement = null;
 
@@ -116,6 +107,22 @@ public class EmployeeDAO {
 			updateEmployeeStatement.close();
 		}
 		
+	}
+	
+	public void deleteEmployee(int id) throws SQLException {
+		PreparedStatement deleteEmployeeStatement = null;
+		
+		try {
+			deleteEmployeeStatement = myConn.prepareStatement("DELETE FROM employee WHERE employee_id=?");
+			
+			deleteEmployeeStatement.setInt(1, id);
+	  		
+			deleteEmployeeStatement.executeUpdate();
+			deleteEmployeeStatement.close();
+		}
+		finally {
+			deleteEmployeeStatement.close();
+		}		
 	}
 
 	private Employee convertRowToEmployee(ResultSet myRs) throws SQLException {

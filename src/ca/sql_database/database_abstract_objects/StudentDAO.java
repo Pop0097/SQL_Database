@@ -109,6 +109,22 @@ public class StudentDAO {
 		}
 	}
 	
+	public void deleteStudent(int id) throws SQLException {
+		PreparedStatement deleteStudentStatement = null;
+		
+		try {
+			deleteStudentStatement = myConn.prepareStatement("DELETE FROM student WHERE client_id=?");
+			
+			deleteStudentStatement.setInt(1, id);
+	  		
+			deleteStudentStatement.executeUpdate();
+			deleteStudentStatement.close();
+		}
+		finally {
+			deleteStudentStatement.close();
+		}		
+	}
+	
 	private Student convertRowToStudent(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("client_id");
 		String fname = myRs.getString("client_fname");

@@ -271,6 +271,51 @@ public class Gui extends JFrame {
 		deleteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		deleteButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int row = databaseInformation.getSelectedRow();
+				
+				if (row < 0) {
+					JOptionPane.showMessageDialog(Gui.this, "You must select a row", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				int response = JOptionPane.showConfirmDialog(Gui.this, "Are you sure you want to proceed?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				
+				if (response != JOptionPane.YES_OPTION) { // If user says no
+					return;
+				}
+				
+				try {
+					if (stat == tableStatus.EMPLOYEES) {
+						Employee tempEmp = (Employee) databaseInformation.getValueAt(row, EmployeeTableModel.OBJECT_COL);
+						employeeDAO.deleteEmployee(tempEmp.getId());
+						
+						refreshList();
+						
+						JOptionPane.showMessageDialog(Gui.this, "Employee deleted succesfully.", "Employee Delete", JOptionPane.INFORMATION_MESSAGE);
+					} else if (stat == tableStatus.STUDENTS) {
+						Student tempStu = (Student) databaseInformation.getValueAt(row, StudentTableModel.OBJECT_COL);
+						studentDAO.deleteStudent(tempStu.getId());
+						
+						refreshList();
+						
+						JOptionPane.showMessageDialog(Gui.this, "Student deleted succesfully.", "Student Delete", JOptionPane.INFORMATION_MESSAGE);
+					} else if (stat == tableStatus.LESSONS) {
+						Lesson tempLess = (Lesson) databaseInformation.getValueAt(row, LessonTableModel.OBJECT_COL);
+						lessonDAO.deleteLesson(tempLess.getId());
+						
+						refreshList();
+						
+						JOptionPane.showMessageDialog(Gui.this, "Lesson deleted succesfully.", "Lesson Delete", JOptionPane.INFORMATION_MESSAGE);
+					}
+				} catch (Exception exc) {
+					if (stat == tableStatus.EMPLOYEES) {
+						JOptionPane.showMessageDialog(Gui.this, "Error deleting employee: " + exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					} else if (stat == tableStatus.STUDENTS) {
+						JOptionPane.showMessageDialog(Gui.this, "Error deleting student: " + exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					} else if (stat == tableStatus.LESSONS) {
+						JOptionPane.showMessageDialog(Gui.this, "Error deleting lesson: " + exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 			}
 		});
 		deleteButton.setBackground(new Color(128, 128, 128));
