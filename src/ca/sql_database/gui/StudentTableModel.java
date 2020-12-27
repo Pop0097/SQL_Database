@@ -8,9 +8,10 @@ import javax.swing.table.AbstractTableModel;
 
 public class StudentTableModel extends AbstractTableModel {
 	
+	public static final int OBJECT_COL = -1;
 	private static final int ID_COL = 0;
-	private static final int LAST_NAME_COL = 1;
-	private static final int FIRST_NAME_COL = 2;
+	private static final int FIRST_NAME_COL = 1;
+	private static final int LAST_NAME_COL = 2;
 	private static final int EMAIL_COL = 3;
 	private static final int PLAN_COL = 4;
 
@@ -54,6 +55,8 @@ public class StudentTableModel extends AbstractTableModel {
 				try {
 					return tempStudent.getPlan();
 				} catch (Exception exc) {}
+			case OBJECT_COL:
+				return tempStudent;
 			default:
 				return tempStudent.getLastName();
 		}

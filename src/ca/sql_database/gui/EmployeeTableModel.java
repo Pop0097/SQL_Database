@@ -8,9 +8,10 @@ import javax.swing.table.AbstractTableModel;
 
 public class EmployeeTableModel extends AbstractTableModel {
 	
+	public static final int OBJECT_COL = -1;
 	private static final int ID_COL = 0;
-	private static final int LAST_NAME_COL = 1;
-	private static final int FIRST_NAME_COL = 2;
+	private static final int FIRST_NAME_COL = 1;
+	private static final int LAST_NAME_COL = 2;
 	private static final int EMAIL_COL = 3;
 
 	private String[] columnNames = {"ID", "First Name", "Last Name", "Email"};
@@ -49,6 +50,8 @@ public class EmployeeTableModel extends AbstractTableModel {
 				return tempEmployee.getLastName();
 			case EMAIL_COL:
 				return tempEmployee.getEmail();
+			case OBJECT_COL:
+				return tempEmployee;
 			default:
 				return tempEmployee.getLastName();
 		}

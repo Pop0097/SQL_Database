@@ -94,6 +94,24 @@ public class LessonDAO {
 		}
 	}
 	
+	public void updateLesson(int stuId, int empId, Date date, int time, int id) throws SQLException {
+		PreparedStatement updateLessonStatement = null;		
+		try {
+			updateLessonStatement = myConn.prepareStatement("UPDATE lesson SET lesson_studentId=?, lesson_employeeId=?, lesson_date=?, lesson_time=? WHERE lesson_id=?");
+			
+			updateLessonStatement.setInt(1, stuId);
+			updateLessonStatement.setInt(2, empId);
+			updateLessonStatement.setDate(3, date);
+			updateLessonStatement.setInt(4, time);
+			updateLessonStatement.setInt(5, id);
+			// For CUD operations, make sure you use executeUpdate() and that you .close() it afterwards. For R operations, use executeQuery()
+			updateLessonStatement.executeUpdate();
+		}
+		finally {
+			updateLessonStatement.close();
+		}
+	}
+	
 	private Lesson convertRowToLesson(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("lesson_id");
 		Date d = myRs.getDate("lesson_date");

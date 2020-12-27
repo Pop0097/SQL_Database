@@ -88,13 +88,31 @@ public class StudentDAO {
 		finally {
 			createStudentStatement.close();
 		}
-
+	}
+	
+	public void updateStudent(String fname, String lname, String email, int plan, int id) throws SQLException {
+		PreparedStatement updateStudentStatement = null;
+		
+		try {
+			updateStudentStatement = myConn.prepareStatement("UPDATE student SET client_fname=?, client_lname=?, client_email=?, client_plan=? WHERE client_id=?");
+			
+			updateStudentStatement.setString(1, fname); 
+			updateStudentStatement.setString(2, lname);
+			updateStudentStatement.setString(3, email);
+			updateStudentStatement.setInt(4, plan);
+			updateStudentStatement.setInt(5, id);
+	 		
+			updateStudentStatement.executeUpdate();
+		}
+		finally {
+			updateStudentStatement.close();
+		}
 	}
 	
 	private Student convertRowToStudent(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("client_id");
-		String lname = myRs.getString("client_fname");
-		String fname = myRs.getString("client_lname");
+		String fname = myRs.getString("client_fname");
+		String lname = myRs.getString("client_lname");
 		String email = myRs.getString("client_email");
 		int plan = myRs.getInt("client_plan");
 				

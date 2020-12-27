@@ -14,28 +14,30 @@ import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import ca.sql_database.database_abstract_objects.StudentDAO;
+import ca.sql_database.database_abstract_objects.EmployeeDAO;
+import ca.sql_database.object_classes.Employee;
 
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.AbstractListModel;
-
-public class CreateStudentDialog extends JDialog {
+public class EmployeeDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField firstNameInput;
 	private JTextField lastNameInput;
 	private JTextField emailInput;
 	
-	private StudentDAO studentDAO;
+	private EmployeeDAO employeeDAO;
 	private Gui gui;
+	
+	private Employee prevEmployee = null;
+	private boolean updateMode = false;
+	private int employeeId = 0;
+
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			CreateStudentDialog dialog = new CreateStudentDialog();
+			EmployeeDialog dialog = new EmployeeDialog();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -43,18 +45,43 @@ public class CreateStudentDialog extends JDialog {
 		}
 	}
 	
-	public CreateStudentDialog(Gui currentScreen, StudentDAO stuDAO) {
+	public EmployeeDialog(Gui currentScreen, EmployeeDAO empDAO, Employee prevEmp, boolean modeUpdate) {
 		this(); // Calls default constructor
-		studentDAO = stuDAO;
+		employeeDAO = empDAO;
+		gui = currentScreen;
+		prevEmployee = prevEmp;
+		updateMode = modeUpdate;
+		
+		if (prevEmployee != null) {
+			employeeId = prevEmp.getId();
+		}
+		
+		if (updateMode) {
+			setTitle("Update Employee");
+			
+			fillInTextFields(prevEmployee);
+		}
+	}
+	
+	private void fillInTextFields(Employee emp) {
+		firstNameInput.setText(emp.getFirstName());
+		lastNameInput.setText(emp.getLastName());
+		emailInput.setText(emp.getEmail());	
+	}
+
+	
+	public EmployeeDialog(Gui currentScreen, EmployeeDAO empDAO) {
+		this(); // Calls default constructor
+		employeeDAO = empDAO;
 		gui = currentScreen;
 	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public CreateStudentDialog() {
-		setTitle("Create Student");
-		setBounds(100, 100, 450, 379);
+	public EmployeeDialog() {
+		setTitle("Create Employee");
+		setBounds(100, 100, 450, 261);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -78,51 +105,35 @@ public class CreateStudentDialog extends JDialog {
 		JLabel emailLabel = new JLabel("Email:");
 		emailLabel.setBounds(16, 150, 61, 16);
 		contentPanel.add(emailLabel);
-		
-		JLabel lastNameLabel = new JLabel("Last Name:");
-		lastNameLabel.setBounds(16, 90, 117, 16);
-		contentPanel.add(lastNameLabel);
-		
+
 		JLabel firstNameLabel = new JLabel("First Name:");
 		firstNameLabel.setBounds(16, 27, 117, 16);
 		contentPanel.add(firstNameLabel);
 		
-		JLabel planLabel = new JLabel("Plan:");
-		planLabel.setBounds(16, 234, 61, 16);
-		contentPanel.add(planLabel);
-		
-		JList planInput = new JList();
-		planInput.setModel(new AbstractListModel() {
-			String[] values = new String[] {"Lyte", "Basic", "Plus", "Pro", "Membership"};
-			public int getSize() {
-				return values.length;
-			}
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
-		planInput.setVisibleRowCount(5);
-		planInput.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		planInput.setBounds(103, 199, 330, 90);
-		contentPanel.add(planInput);
+		JLabel lastNameLabel = new JLabel("Last Name:");
+		lastNameLabel.setBounds(16, 90, 117, 16);
+		contentPanel.add(lastNameLabel);
 		
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("Create Student");
+				JButton okButton = new JButton("Save");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						// get the employee info from gui
 						String fname = firstNameInput.getText();
 						String lname = lastNameInput.getText();
 						String email = emailInput.getText();
-						int plan = planInput.getSelectedIndex() + 1;
 						
 						try {
 							// save to the database
-							studentDAO.createStudent(fname, lname, email, plan);
+							if (updateMode) {
+								employeeDAO.updateEmployee(fname, lname, email, employeeId);
+							} else {
+								employeeDAO.createEmployee(fname, lname, email);
+							}
 
 							// close dialog
 							setVisible(false);
@@ -132,7 +143,11 @@ public class CreateStudentDialog extends JDialog {
 							gui.refreshList();
 							
 							// show success message
-							JOptionPane.showMessageDialog(gui, "Employee added succesfully.", "Employee Added", JOptionPane.INFORMATION_MESSAGE);
+							if (updateMode) {
+								JOptionPane.showMessageDialog(gui, "Employee updated succesfully.", "Employee Updated", JOptionPane.INFORMATION_MESSAGE);
+							} else {
+								JOptionPane.showMessageDialog(gui, "Employee added succesfully.", "Employee Added", JOptionPane.INFORMATION_MESSAGE);
+							}
 						} catch (Exception exc) {
 							JOptionPane.showMessageDialog(gui, "Error saving employee: " + exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 						}

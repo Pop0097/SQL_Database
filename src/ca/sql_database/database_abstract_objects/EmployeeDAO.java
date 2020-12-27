@@ -100,21 +100,28 @@ public class EmployeeDAO {
 	}
 	
 	public void updateEmployee(String fname, String lname, String email, int id) throws SQLException {
-		PreparedStatement updateEmployeeStatement = myConn.prepareStatement("UPDATE employee SET employee_fname=?, employee_lname=?, employee_email=? WHERE employee_id=?");
+		PreparedStatement updateEmployeeStatement = null;
 
-		updateEmployeeStatement.setString(1, fname);
-		updateEmployeeStatement.setString(2, lname);
-		updateEmployeeStatement.setString(3, email);
-		updateEmployeeStatement.setInt(4, id);
- 		
-		updateEmployeeStatement.executeUpdate();
-		updateEmployeeStatement.close();
+		try {
+			updateEmployeeStatement = myConn.prepareStatement("UPDATE employee SET employee_fname=?, employee_lname=?, employee_email=? WHERE employee_id=?");
+			
+			updateEmployeeStatement.setString(1, fname);
+			updateEmployeeStatement.setString(2, lname);
+			updateEmployeeStatement.setString(3, email);
+			updateEmployeeStatement.setInt(4, id);
+	 		
+			updateEmployeeStatement.executeUpdate();
+		}
+		finally {
+			updateEmployeeStatement.close();
+		}
+		
 	}
 
 	private Employee convertRowToEmployee(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("employee_id");
-		String lname = myRs.getString("employee_fname");
-		String fname = myRs.getString("employee_lname");
+		String fname = myRs.getString("employee_fname");
+		String lname = myRs.getString("employee_lname");
 		String email = myRs.getString("employee_email");
 		
 		Employee tempEmployee = new Employee(id, fname, lname, email);

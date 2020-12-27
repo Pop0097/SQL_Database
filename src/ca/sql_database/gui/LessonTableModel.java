@@ -10,6 +10,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class LessonTableModel extends AbstractTableModel {
 	
+	public static final int OBJECT_COL = -1;
 	private static final int ID_COL = 0;
 	private static final int STUDENT_ID_COL = 1;
 	private static final int EMPLOYEE_ID_COL = 2;
@@ -56,6 +57,8 @@ public class LessonTableModel extends AbstractTableModel {
 				try {
 					return tempLesson.getTime();
 				} catch (Exception exc) {}
+			case OBJECT_COL:
+				return tempLesson;
 			default:
 				return tempLesson.getId();
 		}

@@ -18,23 +18,32 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.awt.event.ActionEvent;
 
+import ca.sql_database.database_abstract_objects.EmployeeDAO;
 import ca.sql_database.database_abstract_objects.LessonDAO;
+import ca.sql_database.object_classes.Employee;
+import ca.sql_database.object_classes.Lesson;
+
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.AbstractListModel;
 
-public class CreateLessonDialog extends JDialog {
+public class LessonDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField employeeIdInput;
 	private JTextField studentIdInput;
 	private JTextField yearInput;
+	private JTextField monthInput;
+	private JTextField dayInput;
+	JList timeInput;
 	
 	private LessonDAO lessonDAO;
 	private Gui gui;
-	private JTextField monthInput;
-	private JTextField dayInput;
+	
+	private Lesson prevLesson = null;
+	private boolean updateMode = false;
+	private int lessonId = 0;
 
 
 	/**
@@ -42,7 +51,7 @@ public class CreateLessonDialog extends JDialog {
 	 */
 	public static void main(String[] args) {
 		try {
-			CreateLessonDialog dialog = new CreateLessonDialog();
+			LessonDialog dialog = new LessonDialog();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -50,7 +59,41 @@ public class CreateLessonDialog extends JDialog {
 		}
 	}
 	
-	public CreateLessonDialog(Gui currentScreen, LessonDAO lessDAO) {
+	public LessonDialog(Gui currentScreen, LessonDAO lessDAO, Lesson prevLess, boolean modeUpdate) {
+		this(); // Calls default constructor
+		lessonDAO = lessDAO;
+		gui = currentScreen;
+		prevLesson = prevLess;
+		updateMode = modeUpdate;
+		
+		if (prevLesson != null) {
+			lessonId = prevLess.getId();
+		}
+		
+		if (updateMode) {
+			setTitle("Update Employee");
+			
+			fillInTextFields(prevLesson);
+		}
+	}
+	
+	private void fillInTextFields(Lesson less) {
+		employeeIdInput.setText(Integer.toString(less.getEmployeeId()));
+		studentIdInput.setText(Integer.toString(less.getStudentId()));
+		
+		Date d = less.getDate();
+		String date = d.toString();
+		String[] times = date.split("-");
+		yearInput.setText(times[0]);
+		monthInput.setText(times[1]);
+		dayInput.setText(times[2]);
+		
+		try {
+			timeInput.setSelectedValue(less.getTime(), true);
+		} catch (Exception exc) {}
+	}
+	
+	public LessonDialog(Gui currentScreen, LessonDAO lessDAO) {
 		this(); // Calls default constructor
 		lessonDAO = lessDAO;
 		gui = currentScreen;
@@ -59,7 +102,7 @@ public class CreateLessonDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public CreateLessonDialog() {
+	public LessonDialog() {
 		setTitle("Schedule Lesson");
 		setBounds(100, 100, 450, 516);
 		getContentPane().setLayout(new BorderLayout());
@@ -125,7 +168,7 @@ public class CreateLessonDialog extends JDialog {
 		timeInputScrollPane.setBounds(0, 0, 302, 76);
 		timeInputPanel.add(timeInputScrollPane);
 		
-		JList timeInput = new JList();
+		timeInput = new JList();
 		timeInput.setBounds(0, 0, 302, 76);
 		timeInputScrollPane.setViewportView(timeInput);
 		timeInput.setModel(new AbstractListModel() {
@@ -144,7 +187,7 @@ public class CreateLessonDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("Schedule Lesson");
+				JButton okButton = new JButton("Save");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						// get the employee info from gui
@@ -156,7 +199,11 @@ public class CreateLessonDialog extends JDialog {
 						
 						try {
 							// save to the database
-							lessonDAO.createLesson(stuId, empId, date, time);
+							if (updateMode) {
+								lessonDAO.updateLesson(stuId, empId, date, time, lessonId);
+							} else {
+								lessonDAO.createLesson(stuId, empId, date, time);
+							}
 
 							// close dialog
 							setVisible(false);
@@ -166,9 +213,13 @@ public class CreateLessonDialog extends JDialog {
 							gui.refreshList();
 							
 							// show success message
-							JOptionPane.showMessageDialog(gui, "Employee added succesfully.", "Employee Added", JOptionPane.INFORMATION_MESSAGE);
+							if (updateMode) {
+								JOptionPane.showMessageDialog(gui, "Lesson updated succesfully.", "Lesson Updated", JOptionPane.INFORMATION_MESSAGE);
+							} else {
+								JOptionPane.showMessageDialog(gui, "Lesson added succesfully.", "Lesson Added", JOptionPane.INFORMATION_MESSAGE);
+							}
 						} catch (Exception exc) {
-							JOptionPane.showMessageDialog(gui, "Error saving employee: " + exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(gui, "Error saving lesson: " + exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 						}
 
 					}

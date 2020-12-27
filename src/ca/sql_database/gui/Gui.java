@@ -193,13 +193,13 @@ public class Gui extends JFrame {
 		createButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (stat == tableStatus.EMPLOYEES) {
-					CreateEmployeeDialog dialog = new CreateEmployeeDialog(Gui.this, employeeDAO);
+					EmployeeDialog dialog = new EmployeeDialog(Gui.this, employeeDAO, null, false);
 					dialog.setVisible(true);
 				} else if (stat == tableStatus.STUDENTS) {
-					CreateStudentDialog dialog = new CreateStudentDialog(Gui.this, studentDAO);
+					StudentDialog dialog = new StudentDialog(Gui.this, studentDAO, null, false);
 					dialog.setVisible(true);
 				} else if (stat == tableStatus.LESSONS) {
-					CreateLessonDialog dialog = new CreateLessonDialog(Gui.this, lessonDAO);
+					LessonDialog dialog = new LessonDialog(Gui.this, lessonDAO, null, false);
 					dialog.setVisible(true); 
 				}
 			}
@@ -211,6 +211,33 @@ public class Gui extends JFrame {
 		sideBar.add(createButton);
 		
 		JButton updateButton = new JButton("Update");
+		updateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int row = databaseInformation.getSelectedRow();
+				
+				if (row < 0) {
+					JOptionPane.showMessageDialog(Gui.this, "You must select a row", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if (stat == tableStatus.EMPLOYEES) {
+					Employee tempEmp = (Employee) databaseInformation.getValueAt(row, EmployeeTableModel.OBJECT_COL);
+					
+					EmployeeDialog dialog = new EmployeeDialog(Gui.this, employeeDAO, tempEmp, true);
+					dialog.setVisible(true);
+				} else if (stat == tableStatus.STUDENTS) {
+					Student tempStu = (Student) databaseInformation.getValueAt(row, StudentTableModel.OBJECT_COL);
+					
+					StudentDialog dialog = new StudentDialog(Gui.this, studentDAO, tempStu, true);
+					dialog.setVisible(true);
+				} else if (stat == tableStatus.LESSONS) {
+					Lesson tempLess = (Lesson) databaseInformation.getValueAt(row, LessonTableModel.OBJECT_COL);
+					
+					LessonDialog dialog = new LessonDialog(Gui.this, lessonDAO, tempLess, true);
+					dialog.setVisible(true); 
+				}
+			}
+		});
 		updateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		updateButton.setBackground(new Color(128, 128, 128));
 		updateButton.setBounds(6, 70, 169, 40);
