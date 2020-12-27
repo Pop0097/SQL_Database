@@ -73,15 +73,21 @@ public class EmployeeDAO {
 		}
 	}
 	
-	public void createEmployee( String fname, String lname, String e) throws SQLException{
-		PreparedStatement createEmployeeStatement = myConn.prepareStatement("INSERT INTO EMPLOYEE (employee_fname, employee_lname, employee_email) VALUES (?,?,?)");
-
-		createEmployeeStatement.setString(1, fname);
-		createEmployeeStatement.setString(2, lname);
-		createEmployeeStatement.setString(3, e);
- 		
-		createEmployeeStatement.executeUpdate();
-		createEmployeeStatement.close();
+	public void createEmployee( String fname, String lname, String e) throws SQLException {
+		PreparedStatement createEmployeeStatement = null;
+		
+		try {
+			createEmployeeStatement = myConn.prepareStatement("INSERT INTO employee (employee_fname, employee_lname, employee_email) VALUES (?,?,?)");
+			
+			createEmployeeStatement.setString(1, fname); 
+			createEmployeeStatement.setString(2, lname);
+			createEmployeeStatement.setString(3, e);
+	 		
+			createEmployeeStatement.executeUpdate();
+		}
+		finally {
+			createEmployeeStatement.close();
+		}
 	}
 	
 	public void deleteEmployee(int id) throws SQLException {
@@ -134,11 +140,11 @@ public class EmployeeDAO {
 		close(null, myStmt, myRs);		
 	}
 	
-	public static void main(String[] args) throws Exception {
-		
-		EmployeeDAO dao = new EmployeeDAO();
-		System.out.println(dao.searchEmployees("Ji"));
-
-		System.out.println(dao.getAllEmployees());
-	}
+//	public static void main(String[] args) throws Exception {
+//		
+//		EmployeeDAO dao = new EmployeeDAO();
+//		System.out.println(dao.searchEmployees("Ji"));
+//
+//		System.out.println(dao.getAllEmployees());
+//	}
 }

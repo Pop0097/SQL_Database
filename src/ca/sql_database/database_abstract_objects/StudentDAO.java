@@ -5,7 +5,6 @@ import java.util.*;
 
 import ca.sql_database.object_classes.Student;
 
-import java.sql.*;
 import java.io.*;
 
 public class StudentDAO {
@@ -73,13 +72,32 @@ public class StudentDAO {
 		}
 	}
 	
+	public void createStudent(String fname, String lname, String email, int plan) throws SQLException {
+		PreparedStatement createStudentStatement = null;
+		
+		try {
+			createStudentStatement = myConn.prepareStatement("INSERT INTO student (client_fname, client_lname, client_email, client_plan) VALUES (?,?,?,?)");
+			
+			createStudentStatement.setString(1, fname); 
+			createStudentStatement.setString(2, lname);
+			createStudentStatement.setString(3, email);
+			createStudentStatement.setInt(4, plan);
+	 		
+			createStudentStatement.executeUpdate();
+		}
+		finally {
+			createStudentStatement.close();
+		}
+
+	}
+	
 	private Student convertRowToStudent(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("client_id");
 		String lname = myRs.getString("client_fname");
 		String fname = myRs.getString("client_lname");
 		String email = myRs.getString("client_email");
 		int plan = myRs.getInt("client_plan");
-		
+				
 		Student tempStudent = null;
 		
 		try {

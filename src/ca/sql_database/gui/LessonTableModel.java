@@ -14,8 +14,9 @@ public class LessonTableModel extends AbstractTableModel {
 	private static final int STUDENT_ID_COL = 1;
 	private static final int EMPLOYEE_ID_COL = 2;
 	private static final int DATE_COL = 3;
+	private static final int TIME_COL = 4;
 
-	private String[] columnNames = {"ID", "Student ID", "Employee ID", "Date and Time"};
+	private String[] columnNames = {"ID", "Student ID", "Employee ID", "Date", "Time"};
 	private List<Lesson> lessons;
 
 	public LessonTableModel(List<Lesson> less) {
@@ -48,9 +49,11 @@ public class LessonTableModel extends AbstractTableModel {
 			case STUDENT_ID_COL:
 				return tempLesson.getStudentId();
 			case EMPLOYEE_ID_COL:
-				return tempLesson.getEmployeeid();
+				return tempLesson.getEmployeeId();
 			case DATE_COL:
 				return tempLesson.getDate();
+			case TIME_COL:
+				return tempLesson.getTime();
 			default:
 				return tempLesson.getId();
 		}

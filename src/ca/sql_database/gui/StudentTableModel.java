@@ -51,7 +51,9 @@ public class StudentTableModel extends AbstractTableModel {
 			case EMAIL_COL:
 				return tempStudent.getEmail();
 			case PLAN_COL:
-				return tempStudent.getPlan();
+				try {
+					return tempStudent.getPlan();
+				} catch (Exception exc) {}
 			default:
 				return tempStudent.getLastName();
 		}

@@ -104,14 +104,7 @@ public class Gui extends JFrame {
 		scrollPane.setViewportView(databaseInformation);
 		
 		// Prints initial data (Employees)
-		try {
-			List<Employee> startingEmployees = new ArrayList<>(); 
-			startingEmployees = employeeDAO.getAllEmployees(); // Initializes based on if search was made
-			EmployeeTableModel startingModel = new EmployeeTableModel(startingEmployees); // Prints search results
-			databaseInformation.setModel(startingModel);
-		} catch (Exception exc) {
-			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
-		}
+		printAllEmployees();
 		
 		JPanel header = new JPanel();
 		header.setBackground(new Color(65, 105, 225));
@@ -197,6 +190,21 @@ public class Gui extends JFrame {
 		sideBar.setLayout(null);
 		
 		JButton createButton = new JButton("Create");
+		createButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (stat == tableStatus.EMPLOYEES) {
+					CreateEmployeeDialog dialog = new CreateEmployeeDialog(Gui.this, employeeDAO);
+					dialog.setVisible(true);
+				} else if (stat == tableStatus.STUDENTS) {
+					CreateStudentDialog dialog = new CreateStudentDialog(Gui.this, studentDAO);
+					dialog.setVisible(true);
+				} else if (stat == tableStatus.LESSONS) {
+					CreateLessonDialog dialog = new CreateLessonDialog(Gui.this, lessonDAO);
+					dialog.setVisible(true); 
+				}
+			}
+		});
+		
 		createButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		createButton.setBackground(new Color(128, 128, 128));
 		createButton.setBounds(6, 18, 169, 40);
@@ -209,6 +217,24 @@ public class Gui extends JFrame {
 		sideBar.add(updateButton);
 		
 		JButton switchViewButton = new JButton("Switch Table");
+		switchViewButton.addActionListener(new ActionListener() {
+			// When button is pressed, the information displayed is changed
+			public void actionPerformed(ActionEvent e) {
+				if (stat == tableStatus.EMPLOYEES) {
+					stat = tableStatus.STUDENTS;
+					printAllStudents();
+					tableTitle.setText("Students");
+				} else if (stat == tableStatus.STUDENTS) {
+					stat = tableStatus.LESSONS;
+					printAllLessons();
+					tableTitle.setText("Lessons");
+				} else if (stat == tableStatus.LESSONS) {
+					stat = tableStatus.EMPLOYEES;
+					printAllEmployees();
+					tableTitle.setText("Employees");
+				}
+			}
+		});
 		switchViewButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		switchViewButton.setBackground(new Color(128, 128, 128));
 		switchViewButton.setBounds(6, 122, 169, 40);
@@ -223,5 +249,49 @@ public class Gui extends JFrame {
 		deleteButton.setBackground(new Color(128, 128, 128));
 		deleteButton.setBounds(6, 174, 169, 40);
 		sideBar.add(deleteButton);
+	}
+	
+	
+	private void printAllEmployees() {
+		try {
+			List<Employee> employees = new ArrayList<>(); 
+			employees = employeeDAO.getAllEmployees(); // Initializes based on if search was made
+			EmployeeTableModel startingModel = new EmployeeTableModel(employees); // Prints search results
+			databaseInformation.setModel(startingModel);
+		} catch (Exception exc) {
+			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void printAllStudents() {
+		try {
+			List<Student> students = new ArrayList<>(); 
+			students = studentDAO.getAllStudents(); // Initializes based on if search was made
+			StudentTableModel startingModel = new StudentTableModel(students); // Prints search results
+			databaseInformation.setModel(startingModel);
+		} catch (Exception exc) {
+			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void printAllLessons() {
+		try {
+			List<Lesson> lessons = new ArrayList<>(); 
+			lessons = lessonDAO.getAllLessons(); // Initializes based on if search was made
+			LessonTableModel startingModel = new LessonTableModel(lessons); // Prints search results
+			databaseInformation.setModel(startingModel);
+		} catch (Exception exc) {
+			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void refreshList() {
+		if (stat == tableStatus.EMPLOYEES) {
+			printAllEmployees();
+		} else if (stat == tableStatus.STUDENTS) {
+			printAllStudents();
+		} else if (stat == tableStatus.LESSONS) {
+			printAllLessons();
+		}
 	}
 }

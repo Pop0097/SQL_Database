@@ -27,7 +27,7 @@ public class Student {
 		String password = props.getProperty("password");
 		String dburl = props.getProperty("dburl");
 		
-		myConn = DriverManager.getConnection(dburl, user,password);
+		myConn = DriverManager.getConnection(dburl, user, password);
 	}
 	
 	public int getId() {
@@ -47,7 +47,7 @@ public class Student {
 	}
 	
 	public void setLastName(String ln) {
-		this.lname = ln;
+		this.lname = ln; 
 	}
 	
 	public String getEmail() {
@@ -58,14 +58,28 @@ public class Student {
 		this.email = e;
 	}
 	
-	public String getPlan() {
+	public String getPlan() throws SQLException {
+		PreparedStatement getPlan = null;
+		
 		try {
-			Statement myStmt = myConn.createStatement();
-			ResultSet myRs = myStmt.executeQuery("SELECT * FROM plan WHERE plan_id=" + this.plan);
-			return myRs.getString("plan_type");
+			getPlan = myConn.prepareStatement("SELECT * FROM plan WHERE plan_id=?");
+			
+			getPlan.setInt(1, this.plan);
+						
+			ResultSet myRs = getPlan.executeQuery(); 
+			
+			if (myRs.next()) {
+				String toReturn = myRs.getString("plan_type");
+				return toReturn;
+			} else {
+				return "";
+			}
 		} catch (Exception exc) {
 			System.out.println("Unsuccessful query - Student find plan");
 			return "";
+		}
+		finally {
+			getPlan.close();
 		}
 	}
 	

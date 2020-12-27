@@ -7,6 +7,7 @@ import java.sql.*;
 public class Lesson {
 	private int id;
 	private Date date;
+	private Time time;
 	private int student_id;
 	private int employee_id;
 	private Student stu;
@@ -14,11 +15,12 @@ public class Lesson {
 	
 	private Connection myConn;
 	
-	public Lesson(int id, Date d, int stu_id, int emp_id) throws Exception {
-		this.id = id;
+	public Lesson(int id, Date d, int stu_id, int emp_id, Time t) throws Exception {
+		this.id = id; 
 		this.date = d;
 		this.student_id = stu_id;
 		this.employee_id = emp_id;
+		this.time = t;
 		
 		Properties props = new Properties();
 		props.load(new FileInputStream("db.properties"));
@@ -50,12 +52,20 @@ public class Lesson {
 		this.student_id = id;
 	}
 	
-	public int getEmployeeid() {
+	public int getEmployeeId() {
 		return this.employee_id;
 	}
 	
 	public void setEmployeeId(int id) {
 		this.employee_id = id;
+	}
+	
+	public Time getTime() {
+		return this.time;
+	}
+	
+	public void setTime(Time t) {
+		this.time = t;
 	}
 	
 	@Override

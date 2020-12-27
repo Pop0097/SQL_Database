@@ -63,7 +63,7 @@ public class LessonDAO {
 			
 			myStmt.setInt(1, value);
 			
-			myRs = myStmt.executeQuery();
+			myRs = myStmt.executeQuery(); 
 			
 			while (myRs.next()) {
 				Lesson tempLesson = convertRowToLesson(myRs);
@@ -77,16 +77,34 @@ public class LessonDAO {
 		}
 	}
 	
+	public void createLesson(int stuId, int empId, Date date, Time time) throws SQLException {
+		PreparedStatement createLessonStatement = null;		
+		try {
+			createLessonStatement = myConn.prepareStatement("INSERT INTO LESSON(lesson_studentId, lesson_employeeId, lesson_date, lesson_time) VALUES (?,?,?,?)");
+			
+			createLessonStatement.setInt(1, stuId);
+			createLessonStatement.setInt(2, empId);
+			createLessonStatement.setDate(3, date);
+			createLessonStatement.setTime(4, time);
+			// For CUD operations, make sure you use executeUpdate() and that you .close() it afterwards. For R operations, use executeQuery()
+			createLessonStatement.executeUpdate();
+		}
+		finally {
+			createLessonStatement.close();
+		}
+	}
+	
 	private Lesson convertRowToLesson(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("lesson_id");
 		Date d = myRs.getDate("lesson_date");
 		int stu_id = myRs.getInt("lesson_studentId");
 		int emp_id = myRs.getInt("lesson_employeeId");
+		Time time = myRs.getTime("lesson_time");
 		
 		Lesson tempLesson = null;
 		
 		try {
-			tempLesson = new Lesson(id, d, stu_id, emp_id);
+			tempLesson = new Lesson(id, d, stu_id, emp_id, time);
 		} catch (Exception exc) {
 			System.out.println("Creating Lesson not successful");
 		}
