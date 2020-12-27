@@ -53,7 +53,9 @@ public class LessonTableModel extends AbstractTableModel {
 			case DATE_COL:
 				return tempLesson.getDate();
 			case TIME_COL:
-				return tempLesson.getTime();
+				try {
+					return tempLesson.getTime();
+				} catch (Exception exc) {}
 			default:
 				return tempLesson.getId();
 		}

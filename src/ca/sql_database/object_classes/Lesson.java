@@ -7,7 +7,7 @@ import java.sql.*;
 public class Lesson {
 	private int id;
 	private Date date;
-	private Time time;
+	private int time;
 	private int student_id;
 	private int employee_id;
 	private Student stu;
@@ -15,7 +15,7 @@ public class Lesson {
 	
 	private Connection myConn;
 	
-	public Lesson(int id, Date d, int stu_id, int emp_id, Time t) throws Exception {
+	public Lesson(int id, Date d, int stu_id, int emp_id, int t) throws Exception {
 		this.id = id; 
 		this.date = d;
 		this.student_id = stu_id;
@@ -60,16 +60,41 @@ public class Lesson {
 		this.employee_id = id;
 	}
 	
-	public Time getTime() {
-		return this.time;
+	public String getTime() throws SQLException {
+		PreparedStatement getTime = null;
+		
+		try {
+			getTime = myConn.prepareStatement("SELECT * FROM times WHERE time_id=?");
+			
+			getTime.setInt(1, this.time);
+						
+			ResultSet myRs = getTime.executeQuery(); 
+			
+			if (myRs.next()) {
+				String toReturn = myRs.getString("time_value");
+				return toReturn;
+			} else {
+				return "";
+			}
+		} catch (Exception exc) {
+			System.out.println("Unsuccessful query - Time find value");
+			return "";
+		}
+		finally {
+			getTime.close();
+		}
 	}
 	
-	public void setTime(Time t) {
-		this.time = t;
+	public void setTime(int t) {
+		if (t >=1 && t <= 20) {
+			this.time = t;
+		} else {
+			System.out.println("Time value out of bounds");
+		}
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("Lesson [id=%s, S_id=%s, E_id=%s, Date=%s]", id, student_id, employee_id, date);
+		return String.format("Lesson [id=%s, S_id=%s, E_id=%s, Date=%s, Time=%s]", id, student_id, employee_id, date, time);
 	} 
 }

@@ -19,6 +19,10 @@ import java.text.SimpleDateFormat;
 import java.awt.event.ActionEvent;
 
 import ca.sql_database.database_abstract_objects.LessonDAO;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.AbstractListModel;
 
 public class CreateLessonDialog extends JDialog {
 
@@ -31,7 +35,6 @@ public class CreateLessonDialog extends JDialog {
 	private Gui gui;
 	private JTextField monthInput;
 	private JTextField dayInput;
-	private JTextField timeInput;
 
 
 	/**
@@ -58,7 +61,7 @@ public class CreateLessonDialog extends JDialog {
 	 */
 	public CreateLessonDialog() {
 		setTitle("Schedule Lesson");
-		setBounds(100, 100, 450, 461);
+		setBounds(100, 100, 450, 516);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -70,13 +73,13 @@ public class CreateLessonDialog extends JDialog {
 		employeeIdInput.setColumns(10);
 		
 		studentIdInput = new JTextField();
-		studentIdInput.setColumns(10);
 		studentIdInput.setBounds(131, 80, 302, 36);
+		studentIdInput.setColumns(10);
 		contentPanel.add(studentIdInput);
 		
 		yearInput = new JTextField();
-		yearInput.setColumns(10);
 		yearInput.setBounds(131, 140, 302, 36);
+		yearInput.setColumns(10);
 		contentPanel.add(yearInput);
 		
 		JLabel yearLabel = new JLabel("Year (YYYY):");
@@ -96,8 +99,8 @@ public class CreateLessonDialog extends JDialog {
 		contentPanel.add(monthLabel);
 		
 		monthInput = new JTextField();
-		monthInput.setColumns(10);
 		monthInput.setBounds(131, 204, 302, 36);
+		monthInput.setColumns(10);
 		contentPanel.add(monthInput);
 		
 		JLabel dayLabel = new JLabel("Day (DD):");
@@ -105,18 +108,36 @@ public class CreateLessonDialog extends JDialog {
 		contentPanel.add(dayLabel);
 		
 		dayInput = new JTextField();
-		dayInput.setColumns(10);
 		dayInput.setBounds(131, 268, 302, 36);
+		dayInput.setColumns(10);
 		contentPanel.add(dayInput);
 		
 		JLabel timeLabel = new JLabel("Time (HH:MM:SS):");
-		timeLabel.setBounds(16, 339, 117, 16);
+		timeLabel.setBounds(16, 358, 117, 16);
 		contentPanel.add(timeLabel);
 		
-		timeInput = new JTextField();
-		timeInput.setColumns(10);
-		timeInput.setBounds(131, 329, 302, 36);
-		contentPanel.add(timeInput);
+		JPanel timeInputPanel = new JPanel();
+		timeInputPanel.setBounds(131, 327, 302, 76);
+		contentPanel.add(timeInputPanel);
+		timeInputPanel.setLayout(null);
+		
+		JScrollPane timeInputScrollPane = new JScrollPane();
+		timeInputScrollPane.setBounds(0, 0, 302, 76);
+		timeInputPanel.add(timeInputScrollPane);
+		
+		JList timeInput = new JList();
+		timeInput.setBounds(0, 0, 302, 76);
+		timeInputScrollPane.setViewportView(timeInput);
+		timeInput.setModel(new AbstractListModel() {
+			String[] values = new String[] {"09:00:00", "09:30:00", "10:00:00", "10:30:00", "11:00:00", "11:30:00", "12:00:00", "12:30:00", "13:00:00", "13:30:00", "14:00:00", "14:30:00", "15:00:00", "15:30:00", "16:00:00", "16:30:00", "17:00:00", "17:30:00", "18:00:00", "18:30:00"};
+			public int getSize() {
+				return values.length;
+			}
+			public Object getElementAt(int index) {
+				return values[index];
+			}
+		});
+		timeInput.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		{
 			JPanel buttonPane = new JPanel();
@@ -131,8 +152,7 @@ public class CreateLessonDialog extends JDialog {
 						int stuId = Integer.parseInt(studentIdInput.getText()); 
 						String dateStr = yearInput.getText() + "-" + monthInput.getText() + "-" + dayInput.getText();
 						Date date = Date.valueOf(dateStr);
-						String timeStr = timeInput.getText();
-						Time time = Time.valueOf(timeStr);
+						int time = timeInput.getSelectedIndex() + 1;
 						
 						try {
 							// save to the database

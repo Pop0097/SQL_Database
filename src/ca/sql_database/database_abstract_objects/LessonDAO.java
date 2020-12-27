@@ -77,7 +77,7 @@ public class LessonDAO {
 		}
 	}
 	
-	public void createLesson(int stuId, int empId, Date date, Time time) throws SQLException {
+	public void createLesson(int stuId, int empId, Date date, int time) throws SQLException {
 		PreparedStatement createLessonStatement = null;		
 		try {
 			createLessonStatement = myConn.prepareStatement("INSERT INTO LESSON(lesson_studentId, lesson_employeeId, lesson_date, lesson_time) VALUES (?,?,?,?)");
@@ -85,7 +85,7 @@ public class LessonDAO {
 			createLessonStatement.setInt(1, stuId);
 			createLessonStatement.setInt(2, empId);
 			createLessonStatement.setDate(3, date);
-			createLessonStatement.setTime(4, time);
+			createLessonStatement.setInt(4, time);
 			// For CUD operations, make sure you use executeUpdate() and that you .close() it afterwards. For R operations, use executeQuery()
 			createLessonStatement.executeUpdate();
 		}
@@ -99,7 +99,7 @@ public class LessonDAO {
 		Date d = myRs.getDate("lesson_date");
 		int stu_id = myRs.getInt("lesson_studentId");
 		int emp_id = myRs.getInt("lesson_employeeId");
-		Time time = myRs.getTime("lesson_time");
+		int time = myRs.getInt("lesson_time");
 		
 		Lesson tempLesson = null;
 		
