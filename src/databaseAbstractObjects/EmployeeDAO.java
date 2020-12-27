@@ -1,20 +1,17 @@
-package databaseAbstractObject;
+package databaseAbstractObjects;
 
 import objectClasses.Employee;
-import objectClasses.Student;
-import objectClasses.Lesson;
 
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
 import java.sql.*;
 import java.io.*;
 
-public class LessonDAO {
+public class EmployeeDAO {
 	
 	private Connection myConn;
 	
-	public LessonDAO() throws Exception {
+	public EmployeeDAO() throws Exception {
 		
 		// Create connection
 		Properties props = new Properties();
@@ -27,19 +24,19 @@ public class LessonDAO {
 		myConn = DriverManager.getConnection(dburl, user,password);
 	}
 	
-	public List<Lesson> getAllLessons() throws Exception {
-		List<Lesson> list = new ArrayList<>();
+	public List<Employee> getAllEmployees() throws Exception {
+		List<Employee> list = new ArrayList<>();
 		
 		Statement myStmt = null;
 		ResultSet myRs = null;
 		
 		try {
 			myStmt = myConn.createStatement();
-			myRs = myStmt.executeQuery("SELECT * FROM lesson");
+			myRs = myStmt.executeQuery("SELECT * FROM employee");
 			
 			while (myRs.next()) {
-				Lesson tempLesson = convertRowToLesson(myRs);
-				list.add(tempLesson);
+				Employee tempEmp = convertRowToEmployee(myRs);
+				list.add(tempEmp);
 			}
 			
 			return list;
@@ -49,22 +46,23 @@ public class LessonDAO {
 		}
 	}
 	
-	public List<Lesson> searchLessons(int id) throws Exception {
-		List<Lesson> list = new ArrayList<>();
+	public List<Employee> searchEmployees(String fname) throws Exception {
+		List<Employee> list = new ArrayList<>();
 
 		PreparedStatement myStmt = null;
 		ResultSet myRs = null;
 
 		try {
-			myStmt = myConn.prepareStatement("SELECT * FROM lesson WHERE lesson_id=?");
+			fname += "%"; // Done so we can use the like command in SQL
+			myStmt = myConn.prepareStatement("SELECT * FROM employee WHERE employee_fname LIKE ?");
 			
-			myStmt.setInt(1, id);
+			myStmt.setString(1, fname);
 			
 			myRs = myStmt.executeQuery();
 			
 			while (myRs.next()) {
-				Lesson tempLesson = convertRowToLesson(myRs);
-				list.add(tempLesson);
+				Employee tempEmp = convertRowToEmployee(myRs);
+				list.add(tempEmp);
 			}
 			
 			return list;
@@ -73,24 +71,18 @@ public class LessonDAO {
 			close(myStmt, myRs);
 		}
 	}
-	
-	private Lesson convertRowToLesson(ResultSet myRs) throws SQLException {
-		int id = myRs.getInt("lesson_id");
-		Date d = myRs.getDate("lesson_date");
-		int stu_id = myRs.getInt("lesson_studentId");
-		int emp_id = myRs.getInt("lesson_employeeId");
+
+	private Employee convertRowToEmployee(ResultSet myRs) throws SQLException {
+		int id = myRs.getInt("employee_id");
+		String lname = myRs.getString("employee_fname");
+		String fname = myRs.getString("employee_lname");
+		String email = myRs.getString("employee_email");
 		
-		Lesson tempLesson = null;
+		Employee tempEmployee = new Employee(id, fname, lname, email);
 		
-		try {
-			tempLesson = new Lesson(id, d, stu_id, emp_id);
-		} catch (Exception ex) {
-			System.out.println("Creating Lesson not successful");
-		}
-		
-		return tempLesson;
+		return tempEmployee;
 	}
-	
+
 	private static void close(Connection myConn, Statement myStmt, ResultSet myRs) throws SQLException {
 		if (myRs != null) {
 			myRs.close();
@@ -111,9 +103,9 @@ public class LessonDAO {
 	
 //	public static void main(String[] args) throws Exception {
 //		
-//		LessonDAO dao = new LessonDAO();
-//		System.out.println(dao.searchLessons(1));
+//		EmployeeDAO dao = new EmployeeDAO();
+//		System.out.println(dao.searchEmployees("Ji"));
 //
-//		System.out.println(dao.getAllLessons());
-//	}	
+//		System.out.println(dao.getAllEmployees());
+//	}
 }

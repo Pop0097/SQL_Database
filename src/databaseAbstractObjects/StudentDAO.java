@@ -1,4 +1,4 @@
-package databaseAbstractObject;
+package databaseAbstractObjects;
 
 import objectClasses.Student;
 
