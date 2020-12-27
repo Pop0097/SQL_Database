@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import ca.sql_database.database_abstract_objects.EmployeeDAO;
+import ca.sql_database.database_access_objects.EmployeeDAO;
 import ca.sql_database.object_classes.Employee;
 
 public class EmployeeDialog extends JDialog {

@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.awt.event.ActionEvent;
 
-import ca.sql_database.database_abstract_objects.LessonDAO;
+import ca.sql_database.database_access_objects.LessonDAO;
 import ca.sql_database.object_classes.Lesson;
 
 import javax.swing.JList;

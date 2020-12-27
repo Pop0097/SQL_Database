@@ -1,4 +1,4 @@
-package ca.sql_database.database_abstract_objects;
+package ca.sql_database.database_access_objects;
 
 import java.sql.*;
 import java.util.*;
