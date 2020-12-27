@@ -21,28 +21,11 @@ public class Employee {
 		return this.fname;
 	}
 	
-	public void setFirstName(String fn) {
-		this.fname = fn;
-	}
-	
 	public String getLastName() {
 		return this.lname;
-	}
-	
-	public void setLastName(String ln) {
-		this.lname = ln;
 	}
 	
 	public String getEmail() {
 		return this.email;
 	}
-	
-	public void setEmail(String e) {
-		this.email = e;
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("Employee [id=%s, lastName=%s, firstName=%s, email=%s]", id, lname, fname, email);
-	} 
 }

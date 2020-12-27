@@ -13,7 +13,7 @@ public class StudentDAO {
 	
 	public StudentDAO() throws Exception {
 		
-		// Create connection
+		// Establish database Connection
 		Properties props = new Properties();
 		props.load(new FileInputStream("db.properties"));
 		
@@ -24,6 +24,7 @@ public class StudentDAO {
 		myConn = DriverManager.getConnection(dburl, user,password);
 	}
 	
+	// Method returns all students that are in the database
 	public List<Student> getAllStudents() throws Exception {
 		List<Student> list = new ArrayList<>();
 		
@@ -31,9 +32,11 @@ public class StudentDAO {
 		ResultSet myRs = null;
 		
 		try {
+			// Executes query
 			myStmt = myConn.createStatement();
 			myRs = myStmt.executeQuery("SELECT * FROM student");
 			
+			// Adds all students to the list
 			while (myRs.next()) {
 				Student tempStu = convertRowToStudent(myRs);
 				list.add(tempStu);
@@ -46,6 +49,7 @@ public class StudentDAO {
 		}
 	}
 	
+	// Method returns all lessons that match the search
 	public List<Student> searchStudents(String fname) throws Exception {
 		List<Student> list = new ArrayList<>();
 
@@ -53,6 +57,7 @@ public class StudentDAO {
 		ResultSet myRs = null;
 
 		try {
+			// Executes query
 			fname += "%"; // Done so we can use the like command in SQL
 			myStmt = myConn.prepareStatement("SELECT * FROM student WHERE client_fname LIKE ?");
 			
@@ -60,6 +65,7 @@ public class StudentDAO {
 			
 			myRs = myStmt.executeQuery();
 			
+			// Adds results to the list
 			while (myRs.next()) {
 				Student tempStu = convertRowToStudent(myRs);
 				list.add(tempStu);
@@ -72,10 +78,12 @@ public class StudentDAO {
 		}
 	}
 	
+	// Method adds row to the student table
 	public void createStudent(String fname, String lname, String email, int plan) throws SQLException {
 		PreparedStatement createStudentStatement = null;
 		
 		try {
+			// Creates prepared statement and initializes place holders
 			createStudentStatement = myConn.prepareStatement("INSERT INTO student (client_fname, client_lname, client_email, client_plan) VALUES (?,?,?,?)");
 			
 			createStudentStatement.setString(1, fname); 
@@ -83,6 +91,7 @@ public class StudentDAO {
 			createStudentStatement.setString(3, email);
 			createStudentStatement.setInt(4, plan);
 	 		
+			// Executes query
 			createStudentStatement.executeUpdate();
 		}
 		finally {
@@ -90,10 +99,12 @@ public class StudentDAO {
 		}
 	}
 	
+	// Method updates a row in the student table
 	public void updateStudent(String fname, String lname, String email, int plan, int id) throws SQLException {
 		PreparedStatement updateStudentStatement = null;
 		
 		try {
+			// Creates prepared statement and initializes place holders
 			updateStudentStatement = myConn.prepareStatement("UPDATE student SET client_fname=?, client_lname=?, client_email=?, client_plan=? WHERE client_id=?");
 			
 			updateStudentStatement.setString(1, fname); 
@@ -102,6 +113,7 @@ public class StudentDAO {
 			updateStudentStatement.setInt(4, plan);
 			updateStudentStatement.setInt(5, id);
 	 		
+			// Executes query
 			updateStudentStatement.executeUpdate();
 		}
 		finally {
@@ -109,22 +121,25 @@ public class StudentDAO {
 		}
 	}
 	
+	// Method removes a row in the student table
 	public void deleteStudent(int id) throws SQLException {
 		PreparedStatement deleteStudentStatement = null;
 		
 		try {
+			// Creates prepared statement and initializes place holders
 			deleteStudentStatement = myConn.prepareStatement("DELETE FROM student WHERE client_id=?");
 			
 			deleteStudentStatement.setInt(1, id);
 	  		
+			// Executes query
 			deleteStudentStatement.executeUpdate();
-			deleteStudentStatement.close();
 		}
 		finally {
 			deleteStudentStatement.close();
 		}		
 	}
 	
+	// Converts a row in the student table to a Student object
 	private Student convertRowToStudent(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("client_id");
 		String fname = myRs.getString("client_fname");
@@ -160,12 +175,4 @@ public class StudentDAO {
 	private void close(Statement myStmt, ResultSet myRs) throws SQLException {
 		close(null, myStmt, myRs);		
 	}
-	
-//	public static void main(String[] args) throws Exception {
-//		
-//		StudentDAO dao = new StudentDAO();
-//		System.out.println(dao.searchStudents("av"));
-//
-//		System.out.println(dao.getAllStudents());
-//	}	
 }

@@ -20,6 +20,7 @@ public class Student {
 		this.email = e;
 		this.plan = p;
 		
+		// Establishes database connection
 		Properties props = new Properties();
 		props.load(new FileInputStream("db.properties"));
 		
@@ -38,36 +39,28 @@ public class Student {
 		return this.fname;
 	}
 	
-	public void setFirstName(String fn) {
-		this.fname = fn;
-	}
-	
 	public String getLastName() {
 		return this.lname;
-	}
-	
-	public void setLastName(String ln) {
-		this.lname = ln; 
 	}
 	
 	public String getEmail() {
 		return this.email;
 	}
 	
-	public void setEmail(String e) {
-		this.email = e;
-	}
-	
 	public String getPlan() throws SQLException {
+		// Since the student's plan is stored as an integer (plan_id) in the student table, we need to convert it to a string by finding the corresponding row in the plan table
 		PreparedStatement getPlan = null;
 		
 		try {
+			// Creates prepared statement to find the row of the plan corresponding to the integer in client_plan
 			getPlan = myConn.prepareStatement("SELECT * FROM plan WHERE plan_id=?");
 			
 			getPlan.setInt(1, this.plan);
-						
+			
+			// Executes query
 			ResultSet myRs = getPlan.executeQuery(); 
 			
+			// If result is found, return it
 			if (myRs.next()) {
 				String toReturn = myRs.getString("plan_type");
 				return toReturn;
@@ -82,17 +75,4 @@ public class Student {
 			getPlan.close();
 		}
 	}
-	
-	public void setPlan(int p) {
-		if (p >= 1 && p <= 5) {
-			this.plan = p;
-		} else {
-			System.out.println("Plan value out of bounds");
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("Student [id=%s, lastName=%s, firstName=%s, email=%s, plan=%s]", id, lname, fname, email, plan);
-	} 
 }

@@ -1,6 +1,5 @@
 package ca.sql_database.gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -42,6 +41,7 @@ public class Gui extends JFrame {
 	private StudentDAO studentDAO;
 	private LessonDAO lessonDAO;
 	
+	// Used to keep track of the tables being displayed
 	private enum tableStatus {EMPLOYEES, STUDENTS, LESSONS};
 	private tableStatus stat;
 
@@ -55,7 +55,7 @@ public class Gui extends JFrame {
 					Gui frame = new Gui();
 					frame.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					e.printStackTrace(); 
 				}
 			}
 		});
@@ -71,9 +71,9 @@ public class Gui extends JFrame {
 			employeeDAO = new EmployeeDAO();
 			studentDAO = new StudentDAO();
 			lessonDAO = new LessonDAO();
-			stat = tableStatus.EMPLOYEES;
+			stat = tableStatus.EMPLOYEES; // Default table displayed is Employees
 		} catch (Exception exc) {
-			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.this, "Error: " + exc, "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		setResizable(false);
@@ -122,7 +122,9 @@ public class Gui extends JFrame {
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					// Gets searched value
 					String search = searchField.getText();
+					searchField.setText("");
 					
 					if (stat == tableStatus.EMPLOYEES) {
 						// Declares list
@@ -140,8 +142,10 @@ public class Gui extends JFrame {
 						
 						databaseInformation.setModel(model);
 					} else if (stat == tableStatus.STUDENTS) {
+						// Declares list
 						List<Student> students = new ArrayList<>();
 						
+						// Initializes based on if search was made
 						if (search != null && search.trim().length() > 0) {
 							students = studentDAO.searchStudents(search);
 						} else {
@@ -150,11 +154,13 @@ public class Gui extends JFrame {
 						
 						// Prints search results
 						StudentTableModel model = new StudentTableModel(students);
-						
+
 						databaseInformation.setModel(model);
 					} else if (stat == tableStatus.LESSONS) {
+						// Declares list
 						List<Lesson> lessons = new ArrayList<>();
 						
+						// Initializes based on if search was made
 						if (search != null && search.trim().length() > 0) {
 							lessons = lessonDAO.searchLessons(search);
 						} else {
@@ -192,6 +198,7 @@ public class Gui extends JFrame {
 		JButton createButton = new JButton("Create");
 		createButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Opens appropriate dialog based on table currently displayed.
 				if (stat == tableStatus.EMPLOYEES) {
 					EmployeeDialog dialog = new EmployeeDialog(Gui.this, employeeDAO, null, false);
 					dialog.setVisible(true);
@@ -213,13 +220,16 @@ public class Gui extends JFrame {
 		JButton updateButton = new JButton("Update");
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Gets selected row
 				int row = databaseInformation.getSelectedRow();
 				
+				// Returns error if row is not selected
 				if (row < 0) {
 					JOptionPane.showMessageDialog(Gui.this, "You must select a row", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
+				// Based of the current table displayed, the following lines create a temporary object and open the appropriate dialog with updateMode set true.
 				if (stat == tableStatus.EMPLOYEES) {
 					Employee tempEmp = (Employee) databaseInformation.getValueAt(row, EmployeeTableModel.OBJECT_COL);
 					
@@ -245,7 +255,7 @@ public class Gui extends JFrame {
 		
 		JButton switchViewButton = new JButton("Switch Table");
 		switchViewButton.addActionListener(new ActionListener() {
-			// When button is pressed, the information displayed is changed
+			// When button is pressed, the table displayed is changed. Sequence is: Employee --> Student --> Lesson --> Employee ... (repeats)
 			public void actionPerformed(ActionEvent e) {
 				if (stat == tableStatus.EMPLOYEES) {
 					stat = tableStatus.STUDENTS;
@@ -271,20 +281,25 @@ public class Gui extends JFrame {
 		deleteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		deleteButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Gets selected row
 				int row = databaseInformation.getSelectedRow();
 				
+				// Returns error if row is not selected
 				if (row < 0) {
 					JOptionPane.showMessageDialog(Gui.this, "You must select a row", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
+				// Gets confirmation before deleting 
 				int response = JOptionPane.showConfirmDialog(Gui.this, "Are you sure you want to proceed?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				
-				if (response != JOptionPane.YES_OPTION) { // If user says no
+				// If user says no, end process
+				if (response != JOptionPane.YES_OPTION) { 
 					return;
 				}
 				
 				try {
+					// Based on table currently displayed, get a temporary object for the deleted row, call delete__() in the appropriate DAO, and update the GUI.
 					if (stat == tableStatus.EMPLOYEES) {
 						Employee tempEmp = (Employee) databaseInformation.getValueAt(row, EmployeeTableModel.OBJECT_COL);
 						employeeDAO.deleteEmployee(tempEmp.getId());
@@ -327,8 +342,8 @@ public class Gui extends JFrame {
 	private void printAllEmployees() {
 		try {
 			List<Employee> employees = new ArrayList<>(); 
-			employees = employeeDAO.getAllEmployees(); // Initializes based on if search was made
-			EmployeeTableModel startingModel = new EmployeeTableModel(employees); // Prints search results
+			employees = employeeDAO.getAllEmployees(); 
+			EmployeeTableModel startingModel = new EmployeeTableModel(employees); 
 			databaseInformation.setModel(startingModel);
 		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
@@ -338,8 +353,8 @@ public class Gui extends JFrame {
 	private void printAllStudents() {
 		try {
 			List<Student> students = new ArrayList<>(); 
-			students = studentDAO.getAllStudents(); // Initializes based on if search was made
-			StudentTableModel startingModel = new StudentTableModel(students); // Prints search results
+			students = studentDAO.getAllStudents(); 
+			StudentTableModel startingModel = new StudentTableModel(students); 
 			databaseInformation.setModel(startingModel);
 		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
@@ -349,14 +364,15 @@ public class Gui extends JFrame {
 	private void printAllLessons() {
 		try {
 			List<Lesson> lessons = new ArrayList<>(); 
-			lessons = lessonDAO.getAllLessons(); // Initializes based on if search was made
-			LessonTableModel startingModel = new LessonTableModel(lessons); // Prints search results
+			lessons = lessonDAO.getAllLessons(); 
+			LessonTableModel startingModel = new LessonTableModel(lessons); 
 			databaseInformation.setModel(startingModel);
 		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
+	// Populates JTable by calling appropriate method
 	public void refreshList() {
 		if (stat == tableStatus.EMPLOYEES) {
 			printAllEmployees();

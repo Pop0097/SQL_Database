@@ -10,8 +10,6 @@ public class Lesson {
 	private int time;
 	private int student_id;
 	private int employee_id;
-	private Student stu;
-	private Employee emp;
 	
 	private Connection myConn;
 	
@@ -22,6 +20,7 @@ public class Lesson {
 		this.employee_id = emp_id;
 		this.time = t;
 		
+		// Establishes database connection
 		Properties props = new Properties();
 		props.load(new FileInputStream("db.properties"));
 		
@@ -40,36 +39,28 @@ public class Lesson {
 		return this.date;
 	}
 	
-	public void setDate(Date nd) {
-		this.date = nd;
-	}
-	
 	public int getStudentId() {
 		return this.student_id;
-	}
-	
-	public void setStudentId(int id) {
-		this.student_id = id;
 	}
 	
 	public int getEmployeeId() {
 		return this.employee_id;
 	}
 	
-	public void setEmployeeId(int id) {
-		this.employee_id = id;
-	}
-	
-	public String getTime() throws SQLException {
+	public String getTime() throws SQLException { 
+		// Since the lesson time is stored as an integer (time_id) in the lesson table, we need to convert it to a string by finding the corresponding row in the time table
 		PreparedStatement getTime = null;
 		
 		try {
+			// Creates prepared statement to find the row of the time corresponding to the integer in lesson_time
 			getTime = myConn.prepareStatement("SELECT * FROM times WHERE time_id=?");
 			
 			getTime.setInt(1, this.time);
-						
+			
+			// Executes query
 			ResultSet myRs = getTime.executeQuery(); 
 			
+			// If result is found, return it
 			if (myRs.next()) {
 				String toReturn = myRs.getString("time_value");
 				return toReturn;
@@ -84,17 +75,4 @@ public class Lesson {
 			getTime.close();
 		}
 	}
-	
-	public void setTime(int t) {
-		if (t >=1 && t <= 20) {
-			this.time = t;
-		} else {
-			System.out.println("Time value out of bounds");
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("Lesson [id=%s, S_id=%s, E_id=%s, Date=%s, Time=%s]", id, student_id, employee_id, date, time);
-	} 
 }

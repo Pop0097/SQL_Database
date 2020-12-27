@@ -50,16 +50,17 @@ public class EmployeeDialog extends JDialog {
 		employeeDAO = empDAO;
 		gui = currentScreen;
 		prevEmployee = prevEmp;
-		updateMode = modeUpdate;
+		updateMode = modeUpdate; // If updateMode is true, then we are updating. Else, we are creating.
 		
+		// If prevEmployee is defined, then we get its ID
 		if (prevEmployee != null) {
-			employeeId = prevEmp.getId();
+			employeeId = prevEmp.getId(); 
 		}
 		
 		if (updateMode) {
-			setTitle("Update Employee");
+			setTitle("Update Employee"); // If we are updating, we change the title of the dialog 
 			
-			fillInTextFields(prevEmployee);
+			fillInTextFields(prevEmployee); // Fills in the text inputs in the form
 		}
 	}
 	
@@ -67,13 +68,6 @@ public class EmployeeDialog extends JDialog {
 		firstNameInput.setText(emp.getFirstName());
 		lastNameInput.setText(emp.getLastName());
 		emailInput.setText(emp.getEmail());	
-	}
-
-	
-	public EmployeeDialog(Gui currentScreen, EmployeeDAO empDAO) {
-		this(); // Calls default constructor
-		employeeDAO = empDAO;
-		gui = currentScreen;
 	}
 
 	/**
@@ -122,30 +116,30 @@ public class EmployeeDialog extends JDialog {
 				JButton okButton = new JButton("Save");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						// get the employee info from gui
+						// Get info from GUI
 						String fname = firstNameInput.getText();
 						String lname = lastNameInput.getText();
 						String email = emailInput.getText();
 						
 						try {
-							// save to the database
-							if (updateMode) {
+							// Save to the database
+							if (updateMode) { // Updating
 								employeeDAO.updateEmployee(fname, lname, email, employeeId);
-							} else {
+							} else { // Creating
 								employeeDAO.createEmployee(fname, lname, email);
 							}
 
-							// close dialog
+							// Close dialog
 							setVisible(false);
 							dispose();
 
-							// refresh gui list
+							// Refresh GUI list
 							gui.refreshList();
 							
-							// show success message
-							if (updateMode) {
+							// Show success message
+							if (updateMode) { // Updating 
 								JOptionPane.showMessageDialog(gui, "Employee updated succesfully.", "Employee Updated", JOptionPane.INFORMATION_MESSAGE);
-							} else {
+							} else { // Creating
 								JOptionPane.showMessageDialog(gui, "Employee added succesfully.", "Employee Added", JOptionPane.INFORMATION_MESSAGE);
 							}
 						} catch (Exception exc) {

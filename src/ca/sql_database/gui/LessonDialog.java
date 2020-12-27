@@ -13,14 +13,9 @@ import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.sql.Date;
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.awt.event.ActionEvent;
 
-import ca.sql_database.database_abstract_objects.EmployeeDAO;
 import ca.sql_database.database_abstract_objects.LessonDAO;
-import ca.sql_database.object_classes.Employee;
 import ca.sql_database.object_classes.Lesson;
 
 import javax.swing.JList;
@@ -64,23 +59,25 @@ public class LessonDialog extends JDialog {
 		lessonDAO = lessDAO;
 		gui = currentScreen;
 		prevLesson = prevLess;
-		updateMode = modeUpdate;
+		updateMode = modeUpdate; // If updateMode is true, then we are updating. Else, we are creating.
 		
+		// If prevLesson is defined, then we get its ID
 		if (prevLesson != null) {
 			lessonId = prevLess.getId();
 		}
 		
 		if (updateMode) {
-			setTitle("Update Employee");
+			setTitle("Update Lesson"); // If we are updating, we change the title of the dialog
 			
-			fillInTextFields(prevLesson);
-		}
+			fillInInputFields(prevLesson); // Fills in the text inputs in the form
+		} 
 	}
 	
-	private void fillInTextFields(Lesson less) {
+	private void fillInInputFields(Lesson less) {
 		employeeIdInput.setText(Integer.toString(less.getEmployeeId()));
 		studentIdInput.setText(Integer.toString(less.getStudentId()));
 		
+		// To get the year, month, and day, we must convert the Date object to a string and then split it
 		Date d = less.getDate();
 		String date = d.toString();
 		String[] times = date.split("-");
@@ -91,12 +88,6 @@ public class LessonDialog extends JDialog {
 		try {
 			timeInput.setSelectedValue(less.getTime(), true);
 		} catch (Exception exc) {}
-	}
-	
-	public LessonDialog(Gui currentScreen, LessonDAO lessDAO) {
-		this(); // Calls default constructor
-		lessonDAO = lessDAO;
-		gui = currentScreen;
 	}
 
 	/**
@@ -190,38 +181,46 @@ public class LessonDialog extends JDialog {
 				JButton okButton = new JButton("Save");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						// get the employee info from gui
+						// Get info from GUI
 						int empId = Integer.parseInt(employeeIdInput.getText());
 						int stuId = Integer.parseInt(studentIdInput.getText()); 
 						String dateStr = yearInput.getText() + "-" + monthInput.getText() + "-" + dayInput.getText();
-						Date date = Date.valueOf(dateStr);
+						Date date = null;
+						
+						// Need to check to ensure date input is valid. This prevents this code from crashing
+						try {
+							date = Date.valueOf(dateStr);
+						} catch (Exception exc) {
+							JOptionPane.showMessageDialog(gui, "Date input invalid", "Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						
 						int time = timeInput.getSelectedIndex() + 1;
 						
 						try {
-							// save to the database
-							if (updateMode) {
+							// Save to the database
+							if (updateMode) { // Updating
 								lessonDAO.updateLesson(stuId, empId, date, time, lessonId);
-							} else {
+							} else { // Creating
 								lessonDAO.createLesson(stuId, empId, date, time);
 							}
 
-							// close dialog
+							// Close dialog
 							setVisible(false);
 							dispose();
 
-							// refresh gui list
+							// Refresh GUI list
 							gui.refreshList();
 							
-							// show success message
-							if (updateMode) {
+							// Show success message
+							if (updateMode) { // Updating
 								JOptionPane.showMessageDialog(gui, "Lesson updated succesfully.", "Lesson Updated", JOptionPane.INFORMATION_MESSAGE);
-							} else {
+							} else { // Creating
 								JOptionPane.showMessageDialog(gui, "Lesson added succesfully.", "Lesson Added", JOptionPane.INFORMATION_MESSAGE);
 							}
 						} catch (Exception exc) {
 							JOptionPane.showMessageDialog(gui, "Error saving lesson: " + exc.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 						}
-
 					}
 				});
 				okButton.setActionCommand("OK");

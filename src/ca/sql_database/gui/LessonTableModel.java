@@ -4,8 +4,6 @@ import ca.sql_database.object_classes.Lesson;
 
 import java.util.List;
 
-import java.sql.Date;
-
 import javax.swing.table.AbstractTableModel;
 
 public class LessonTableModel extends AbstractTableModel {
@@ -38,7 +36,8 @@ public class LessonTableModel extends AbstractTableModel {
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
-
+	
+	// Gets the value at a specific row and column
 	@Override
 	public Object getValueAt(int row, int col) {
 

@@ -30,12 +30,13 @@ public class EmployeeTableModel extends AbstractTableModel {
 	public int getRowCount() {
 		return employees.size();
 	}
-
+	
 	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
-
+	
+	// Gets the value at a specific row and column
 	@Override
 	public Object getValueAt(int row, int col) {
 

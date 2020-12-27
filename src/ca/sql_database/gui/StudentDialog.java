@@ -50,24 +50,25 @@ public class StudentDialog extends JDialog {
 	}
 	
 	public StudentDialog(Gui currentScreen, StudentDAO stuDAO, Student prevStu, boolean modeUpdate) {
-		this();
+		this(); // Calls default constructor
 		studentDAO = stuDAO;
 		gui = currentScreen;
 		prevStudent = prevStu;
-		updateMode = modeUpdate;
+		updateMode = modeUpdate; // If updateMode is true, then we are updating. Else, we are creating.
 		
+		// If prevStudent is defined, then we get its ID
 		if (prevStudent != null) {
 			studentId = prevStu.getId();
 		}
 		
 		if (updateMode) {
-			setTitle("Update Lesson");
+			setTitle("Update Student"); // If we are updating, we change the title of the dialog
 			
-			fillInTextFields(prevStudent);
+			fillInInputFields(prevStudent); // Fills in the text inputs in the form
 		}
 	}
 	
-	private void fillInTextFields(Student stu) {
+	private void fillInInputFields(Student stu) {
 		firstNameInput.setText(stu.getFirstName());
 		lastNameInput.setText(stu.getLastName());
 		emailInput.setText(stu.getEmail());
@@ -75,12 +76,6 @@ public class StudentDialog extends JDialog {
 		try {
 			planInput.setSelectedValue(stu.getPlan(), true);
 		} catch (Exception exc) {}		
-	}
-	
-	public StudentDialog(Gui currentScreen, StudentDAO stuDAO) {
-		this(); // Calls default constructor
-		studentDAO = stuDAO;
-		gui = currentScreen;
 	}
 
 	/**
@@ -148,31 +143,31 @@ public class StudentDialog extends JDialog {
 				JButton okButton = new JButton("Save");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						// get the employee info from gui
+						// Get info from GUI
 						String fname = firstNameInput.getText();
 						String lname = lastNameInput.getText();
 						String email = emailInput.getText();
 						int plan = planInput.getSelectedIndex() + 1;
 						
 						try {
-							// save to the database
-							if (updateMode) {
+							// Save to the database
+							if (updateMode) { // Update
 								studentDAO.updateStudent(fname, lname, email, plan, studentId);
-							} else {
+							} else { // Create
 								studentDAO.createStudent(fname, lname, email, plan);
 							}
 
-							// close dialog
+							// Close dialog
 							setVisible(false);
 							dispose();
 
-							// refresh gui list
+							// Refresh GUI list
 							gui.refreshList();
 							
-							// show success message
-							if (updateMode) {
+							// Show success message
+							if (updateMode) { // Update
 								JOptionPane.showMessageDialog(gui, "Student updated succesfully.", "Student Updated", JOptionPane.INFORMATION_MESSAGE);
-							} else {
+							} else { // Create
 								JOptionPane.showMessageDialog(gui, "Student added succesfully.", "Student Added", JOptionPane.INFORMATION_MESSAGE);
 							}
 						} catch (Exception exc) {

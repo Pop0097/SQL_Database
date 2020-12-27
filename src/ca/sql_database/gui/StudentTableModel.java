@@ -36,7 +36,8 @@ public class StudentTableModel extends AbstractTableModel {
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
-
+	
+	// Gets the value at a specific row and column
 	@Override
 	public Object getValueAt(int row, int col) {
 

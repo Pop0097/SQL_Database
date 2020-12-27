@@ -4,11 +4,8 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 
-import ca.sql_database.object_classes.Employee;
 import ca.sql_database.object_classes.Lesson;
-import ca.sql_database.object_classes.Student;
 
-import java.sql.*;
 import java.io.*;
 
 public class LessonDAO {
@@ -17,7 +14,7 @@ public class LessonDAO {
 	
 	public LessonDAO() throws Exception {
 		
-		// Create connection
+		// Establish database Connection
 		Properties props = new Properties();
 		props.load(new FileInputStream("db.properties"));
 		
@@ -28,6 +25,7 @@ public class LessonDAO {
 		myConn = DriverManager.getConnection(dburl, user,password);
 	}
 	
+	// Method returns all lessons that are in the database
 	public List<Lesson> getAllLessons() throws Exception {
 		List<Lesson> list = new ArrayList<>();
 		
@@ -35,9 +33,11 @@ public class LessonDAO {
 		ResultSet myRs = null;
 		
 		try {
+			// Executes query
 			myStmt = myConn.createStatement();
 			myRs = myStmt.executeQuery("SELECT * FROM lesson");
 			
+			// Adds all lessons to the list
 			while (myRs.next()) {
 				Lesson tempLesson = convertRowToLesson(myRs);
 				list.add(tempLesson);
@@ -50,6 +50,7 @@ public class LessonDAO {
 		}
 	}
 	
+	// Method returns all lessons that match the search
 	public List<Lesson> searchLessons(String id) throws Exception {
 		List<Lesson> list = new ArrayList<>();
 
@@ -57,14 +58,13 @@ public class LessonDAO {
 		ResultSet myRs = null;
 
 		try {
+			// Executes query
 			myStmt = myConn.prepareStatement("SELECT * FROM lesson WHERE lesson_id=?");
-			
 			int value = Integer.parseInt(id);
-			
 			myStmt.setInt(1, value);
-			
 			myRs = myStmt.executeQuery(); 
 			
+			// Adds results to the list
 			while (myRs.next()) {
 				Lesson tempLesson = convertRowToLesson(myRs);
 				list.add(tempLesson);
@@ -77,16 +77,20 @@ public class LessonDAO {
 		}
 	}
 	
+	// Method adds row to the lesson table
 	public void createLesson(int stuId, int empId, Date date, int time) throws SQLException {
 		PreparedStatement createLessonStatement = null;		
+		
 		try {
+			// Creates prepared statement and initializes place holders
 			createLessonStatement = myConn.prepareStatement("INSERT INTO LESSON(lesson_studentId, lesson_employeeId, lesson_date, lesson_time) VALUES (?,?,?,?)");
 			
 			createLessonStatement.setInt(1, stuId);
 			createLessonStatement.setInt(2, empId);
 			createLessonStatement.setDate(3, date);
 			createLessonStatement.setInt(4, time);
-			// For CUD operations, make sure you use executeUpdate() and that you .close() it afterwards. For R operations, use executeQuery()
+			
+			// Executes query
 			createLessonStatement.executeUpdate();
 		}
 		finally {
@@ -94,9 +98,12 @@ public class LessonDAO {
 		}
 	}
 	
+	// Method updates a row in the lesson table
 	public void updateLesson(int stuId, int empId, Date date, int time, int id) throws SQLException {
 		PreparedStatement updateLessonStatement = null;		
+		
 		try {
+			// Creates prepared statement and initializes place holders
 			updateLessonStatement = myConn.prepareStatement("UPDATE lesson SET lesson_studentId=?, lesson_employeeId=?, lesson_date=?, lesson_time=? WHERE lesson_id=?");
 			
 			updateLessonStatement.setInt(1, stuId);
@@ -104,7 +111,8 @@ public class LessonDAO {
 			updateLessonStatement.setDate(3, date);
 			updateLessonStatement.setInt(4, time);
 			updateLessonStatement.setInt(5, id);
-			// For CUD operations, make sure you use executeUpdate() and that you .close() it afterwards. For R operations, use executeQuery()
+			
+			// Executes query
 			updateLessonStatement.executeUpdate();
 		}
 		finally {
@@ -112,22 +120,25 @@ public class LessonDAO {
 		}
 	}
 	
+	// Method removes a row in the lesson table
 	public void deleteLesson(int id) throws SQLException {
 		PreparedStatement deleteLessonStatement = null;
 		
 		try {
+			// Creates prepared statement and initializes place holders
 			deleteLessonStatement = myConn.prepareStatement("DELETE FROM lesson WHERE lesson_id=?");
 			
 			deleteLessonStatement.setInt(1, id);
 	  		
+			// Executes query
 			deleteLessonStatement.executeUpdate();
-			deleteLessonStatement.close();
 		}
 		finally {
 			deleteLessonStatement.close();
 		}		
 	}
 	
+	// Converts a row in the lesson table to a Lesson object
 	private Lesson convertRowToLesson(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("lesson_id");
 		Date d = myRs.getDate("lesson_date");
@@ -163,12 +174,4 @@ public class LessonDAO {
 	private void close(Statement myStmt, ResultSet myRs) throws SQLException {
 		close(null, myStmt, myRs);		
 	}
-	
-//	public static void main(String[] args) throws Exception {
-//		
-//		LessonDAO dao = new LessonDAO();
-//		System.out.println(dao.searchLessons(1));
-//
-//		System.out.println(dao.getAllLessons());
-//	}	
 }
