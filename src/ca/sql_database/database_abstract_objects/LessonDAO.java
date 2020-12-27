@@ -1,12 +1,13 @@
-package databaseAbstractObjects;
-
-import objectClasses.Employee;
-import objectClasses.Student;
-import objectClasses.Lesson;
+package ca.sql_database.database_abstract_objects;
 
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
+
+import ca.sql_database.object_classes.Employee;
+import ca.sql_database.object_classes.Lesson;
+import ca.sql_database.object_classes.Student;
+
 import java.sql.*;
 import java.io.*;
 
@@ -49,7 +50,7 @@ public class LessonDAO {
 		}
 	}
 	
-	public List<Lesson> searchLessons(int id) throws Exception {
+	public List<Lesson> searchLessons(String id) throws Exception {
 		List<Lesson> list = new ArrayList<>();
 
 		PreparedStatement myStmt = null;
@@ -58,7 +59,9 @@ public class LessonDAO {
 		try {
 			myStmt = myConn.prepareStatement("SELECT * FROM lesson WHERE lesson_id=?");
 			
-			myStmt.setInt(1, id);
+			int value = Integer.parseInt(id);
+			
+			myStmt.setInt(1, value);
 			
 			myRs = myStmt.executeQuery();
 			
@@ -84,7 +87,7 @@ public class LessonDAO {
 		
 		try {
 			tempLesson = new Lesson(id, d, stu_id, emp_id);
-		} catch (Exception ex) {
+		} catch (Exception exc) {
 			System.out.println("Creating Lesson not successful");
 		}
 		

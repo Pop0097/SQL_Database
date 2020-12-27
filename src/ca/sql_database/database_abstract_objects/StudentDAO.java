@@ -1,9 +1,10 @@
-package databaseAbstractObjects;
-
-import objectClasses.Student;
+package ca.sql_database.database_abstract_objects;
 
 import java.sql.*;
 import java.util.*;
+
+import ca.sql_database.object_classes.Student;
+
 import java.sql.*;
 import java.io.*;
 
@@ -83,7 +84,7 @@ public class StudentDAO {
 		
 		try {
 			tempStudent = new Student(id, fname, lname, email, plan);
-		} catch (Exception ex) {
+		} catch (Exception exc) {
 			System.out.println("Creating student not successful");
 		}
 		

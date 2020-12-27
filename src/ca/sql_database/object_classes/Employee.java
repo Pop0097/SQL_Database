@@ -1,4 +1,4 @@
-package objectClasses;
+package ca.sql_database.object_classes;
 
 public class Employee {
 	private int id;
@@ -17,19 +17,19 @@ public class Employee {
 		return this.id;
 	}
 	
-	public String getFname() {
+	public String getFirstName() {
 		return this.fname;
 	}
 	
-	public void setFanme(String fn) {
+	public void setFirstName(String fn) {
 		this.fname = fn;
 	}
 	
-	public String getLname() {
+	public String getLastName() {
 		return this.lname;
 	}
 	
-	public void setLname(String ln) {
+	public void setLastName(String ln) {
 		this.lname = ln;
 	}
 	

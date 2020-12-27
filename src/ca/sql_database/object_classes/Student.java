@@ -1,4 +1,4 @@
-package objectClasses;
+package ca.sql_database.object_classes;
 
 import java.util.Properties;
 import java.io.FileInputStream;
@@ -34,19 +34,19 @@ public class Student {
 		return this.id;
 	}
 	
-	public String getFname() {
+	public String getFirstName() {
 		return this.fname;
 	}
 	
-	public void setFname(String fn) {
+	public void setFirstName(String fn) {
 		this.fname = fn;
 	}
 	
-	public String getLname() {
+	public String getLastName() {
 		return this.lname;
 	}
 	
-	public void setLname(String ln) {
+	public void setLastName(String ln) {
 		this.lname = ln;
 	}
 	
@@ -63,7 +63,7 @@ public class Student {
 			Statement myStmt = myConn.createStatement();
 			ResultSet myRs = myStmt.executeQuery("SELECT * FROM plan WHERE plan_id=" + this.plan);
 			return myRs.getString("plan_type");
-		} catch (Exception ex) {
+		} catch (Exception exc) {
 			System.out.println("Unsuccessful query - Student find plan");
 			return "";
 		}

@@ -1,4 +1,4 @@
-package objectClasses;
+package ca.sql_database.object_classes;
 
 import java.util.Properties;
 import java.io.FileInputStream;

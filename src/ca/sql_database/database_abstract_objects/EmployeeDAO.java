@@ -1,9 +1,10 @@
-package databaseAbstractObjects;
-
-import objectClasses.Employee;
+package ca.sql_database.database_abstract_objects;
 
 import java.sql.*;
 import java.util.*;
+
+import ca.sql_database.object_classes.Employee;
+
 import java.sql.*;
 import java.io.*;
 
@@ -71,6 +72,38 @@ public class EmployeeDAO {
 			close(myStmt, myRs);
 		}
 	}
+	
+	public void createEmployee( String fname, String lname, String e) throws SQLException{
+		PreparedStatement createEmployeeStatement = myConn.prepareStatement("INSERT INTO EMPLOYEE (employee_fname, employee_lname, employee_email) VALUES (?,?,?)");
+
+		createEmployeeStatement.setString(1, fname);
+		createEmployeeStatement.setString(2, lname);
+		createEmployeeStatement.setString(3, e);
+ 		
+		createEmployeeStatement.executeUpdate();
+		createEmployeeStatement.close();
+	}
+	
+	public void deleteEmployee(int id) throws SQLException {
+		PreparedStatement deleteEmployeeStatement = myConn.prepareStatement("DELETE FROM employee WHERE employee_id=?");
+
+		deleteEmployeeStatement.setInt(1, id);
+  		
+		deleteEmployeeStatement.executeUpdate();
+		deleteEmployeeStatement.close();
+	}
+	
+	public void updateEmployee(String fname, String lname, String email, int id) throws SQLException {
+		PreparedStatement updateEmployeeStatement = myConn.prepareStatement("UPDATE employee SET employee_fname=?, employee_lname=?, employee_email=? WHERE employee_id=?");
+
+		updateEmployeeStatement.setString(1, fname);
+		updateEmployeeStatement.setString(2, lname);
+		updateEmployeeStatement.setString(3, email);
+		updateEmployeeStatement.setInt(4, id);
+ 		
+		updateEmployeeStatement.executeUpdate();
+		updateEmployeeStatement.close();
+	}
 
 	private Employee convertRowToEmployee(ResultSet myRs) throws SQLException {
 		int id = myRs.getInt("employee_id");
@@ -101,11 +134,11 @@ public class EmployeeDAO {
 		close(null, myStmt, myRs);		
 	}
 	
-//	public static void main(String[] args) throws Exception {
-//		
-//		EmployeeDAO dao = new EmployeeDAO();
-//		System.out.println(dao.searchEmployees("Ji"));
-//
-//		System.out.println(dao.getAllEmployees());
-//	}
+	public static void main(String[] args) throws Exception {
+		
+		EmployeeDAO dao = new EmployeeDAO();
+		System.out.println(dao.searchEmployees("Ji"));
+
+		System.out.println(dao.getAllEmployees());
+	}
 }
