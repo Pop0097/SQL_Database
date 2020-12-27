@@ -91,6 +91,28 @@ public class Gui extends JFrame {
 		contentPane.add(mainScreen);
 		mainScreen.setLayout(null);
 		
+		JPanel tableDisplay = new JPanel();
+		tableDisplay.setBounds(202, 80, 790, 363);
+		mainScreen.add(tableDisplay);
+		tableDisplay.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 0, 790, 363);
+		tableDisplay.add(scrollPane);
+		
+		databaseInformation = new JTable();
+		scrollPane.setViewportView(databaseInformation);
+		
+		// Prints initial data (Employees)
+		try {
+			List<Employee> startingEmployees = new ArrayList<>(); 
+			startingEmployees = employeeDAO.getAllEmployees(); // Initializes based on if search was made
+			EmployeeTableModel startingModel = new EmployeeTableModel(startingEmployees); // Prints search results
+			databaseInformation.setModel(startingModel);
+		} catch (Exception exc) {
+			JOptionPane.showMessageDialog(Gui.this, "Error: "+ exc, "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
 		JPanel header = new JPanel();
 		header.setBackground(new Color(65, 105, 225));
 		header.setBounds(6, 6, 986, 62);
@@ -133,9 +155,10 @@ public class Gui extends JFrame {
 							students = studentDAO.getAllStudents();
 						}
 						
-						for (Student temp : students) {
-							System.out.println(temp);
-						}
+						// Prints search results
+						StudentTableModel model = new StudentTableModel(students);
+						
+						databaseInformation.setModel(model);
 					} else if (stat == tableStatus.LESSONS) {
 						List<Lesson> lessons = new ArrayList<>();
 						
@@ -145,9 +168,10 @@ public class Gui extends JFrame {
 							lessons = lessonDAO.getAllLessons();
 						}
 						
-						for (Lesson temp : lessons) {
-							System.out.println(temp);
-						}
+						// Prints search results
+						LessonTableModel model = new LessonTableModel(lessons);
+						
+						databaseInformation.setModel(model);
 					}
 				} catch (Exception exc) {
 					JOptionPane.showMessageDialog(Gui.this, "Error: " + exc, "Error", JOptionPane.ERROR_MESSAGE);
@@ -199,17 +223,5 @@ public class Gui extends JFrame {
 		deleteButton.setBackground(new Color(128, 128, 128));
 		deleteButton.setBounds(6, 174, 169, 40);
 		sideBar.add(deleteButton);
-		
-		JPanel tableDisplay = new JPanel();
-		tableDisplay.setBounds(202, 80, 790, 363);
-		mainScreen.add(tableDisplay);
-		tableDisplay.setLayout(null);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 0, 790, 363);
-		tableDisplay.add(scrollPane);
-		
-		databaseInformation = new JTable();
-		scrollPane.setViewportView(databaseInformation);
 	}
 }
