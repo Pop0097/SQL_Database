@@ -1,3 +1,1 @@
-USE database_project;
-
-ALTER TABLE lesson DROP lesson_time;
+CREATE DATABASE database_project;
