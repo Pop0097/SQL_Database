@@ -23,9 +23,9 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import ca.sql_database.database_access_objects.EmployeeDAO;
-import ca.sql_database.database_access_objects.LessonDAO;
-import ca.sql_database.database_access_objects.StudentDAO;
+import ca.sql_database.data_access_objects.EmployeeDAO;
+import ca.sql_database.data_access_objects.LessonDAO;
+import ca.sql_database.data_access_objects.StudentDAO;
 import ca.sql_database.object_classes.Employee;
 import ca.sql_database.object_classes.Lesson;
 import ca.sql_database.object_classes.Student;

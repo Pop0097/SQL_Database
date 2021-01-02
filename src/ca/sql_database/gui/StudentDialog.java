@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import ca.sql_database.database_access_objects.StudentDAO;
+import ca.sql_database.data_access_objects.StudentDAO;
 import ca.sql_database.object_classes.Student;
 
 import javax.swing.JList;
